@@ -19,8 +19,8 @@
     </div>
 
     {{ range . }}
-    <a href="gettask/{{.ID}}">
-        <div class="task" id="{{.ID}}">
+    <a href="gettask/{{ .IDRaw }}">
+        <div class="task" id="{{ .IDRaw }}">
 
             <div class="task-title">
                 <div>

@@ -11,7 +11,7 @@
 <div class="feed">
 
     <div class="create-task">
-        <form action="/update/{{.ID}}" method="post">
+        <form action="/update/{{.IDRaw}}" method="post">
             <textarea name="title" required>{{.Title}}</textarea>
             <textarea name="body" required>{{.Body}}</textarea>
             <button class="send" id="send" type="submit" name="button" value="update"> Submit </button>

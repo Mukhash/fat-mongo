@@ -5,7 +5,6 @@ import (
 	"go-mongo/models"
 	"log"
 	"net/http"
-	"strconv"
 	"text/template"
 )
 
@@ -48,7 +47,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	err := db.InsertTask(&task)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(w, http.StatusText(http.StatusInternalServerError)+" "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -61,11 +60,7 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(r.URL.Path[9:])
-	if err != nil {
-		http.Error(w, "not found", 404)
-		return
-	}
+	id := r.URL.Path[9:]
 
 	task, err := db.GetTask(id)
 	if err != nil {
@@ -73,7 +68,7 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if task == nil {
-		task = &models.Task{}
+		task = &models.TaskId{}
 	}
 
 	renderTemplate(w, "task", *task)
@@ -85,16 +80,12 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(r.URL.Path[8:])
-	if err != nil {
-		http.Error(w, "not found", 404)
-		return
-	}
+	id := r.URL.Path[8:]
 
 	action := r.PostFormValue("button")
 	switch action {
 	case "delete":
-		err = db.DeleteTask(id)
+		err := db.DeleteTask(id)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError)+err.Error(), http.StatusInternalServerError)
 			return
@@ -103,8 +94,8 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		body := r.PostFormValue("body")
 		title := r.PostFormValue("title")
 
-		task := models.Task{ID: int64(id), Title: title, Body: body}
-		err = db.UpdateTask(&task)
+		task := models.TaskId{IDRaw: id, Title: title, Body: body}
+		err := db.UpdateTask(&task)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError)+err.Error(), http.StatusInternalServerError)
 			return

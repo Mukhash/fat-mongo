@@ -3,29 +3,27 @@ package db
 import (
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
 	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
+	port     = 27017
+	user     = "talgat"
 	password = "qwerty"
-	dbname   = "postgres"
+	dbname   = "fat-mongo"
 )
 
 var collection *mongo.Collection
-var ctx = context.TODO()
+var ctx = context.Background()
 var conn *mongo.Client
 
 func CreateConnection() error {
-	credentials := options.Credential{
-		Username: "talgat",
-		Password: "qwerty",
-	}
 	clientOptions := options.Client()
-	clientOptions.ApplyURI("mongodb://localhost:27017/").SetAuth(credentials)
+
+	clientOptions.ApplyURI("mongodb://localhost:27017/")
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -38,6 +36,21 @@ func CreateConnection() error {
 	}
 
 	collection = client.Database("fat-mongo").Collection("tasks")
+	mod := mongo.IndexModel{
+		Keys: bson.M{
+			"title": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}
+
+	collection.Indexes().CreateOne(ctx, mod)
+
+	// testTask := models.Task{Title: "Home", Body: "Wash dishes"}
+	// _, err = collection.InsertOne(ctx, testTask)
+	// if err != nil {
+	// 	return err
+	// }
+
 	conn = client
 	return nil
 }
