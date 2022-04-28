@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<div class="feed">
+
+    <div class="create-task">
+        <form action="/update/{{.ID}}" method="post">
+            <textarea name="title" required>{{.Title}}</textarea>
+            <textarea name="body" required>{{.Body}}</textarea>
+            <button class="send" id="send" type="submit" name="button" value="update"> Submit </button>
+            <button class="send" id="send" type="submit" name="button" value="delete"> Delete </button>
+        </form>
+    </div>
+</div>
+</div>
+</body>
+
+</html>
